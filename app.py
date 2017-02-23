@@ -59,9 +59,6 @@ def register_routes(app):
     from routes.blog import main as routes_blog
     app.register_blueprint(routes_blog, url_prefix='/blog')
 
-    from routes.comment import main as routes_comment
-    app.register_blueprint(routes_comment, url_prefix='/comment')
-
 
 def configure_env_vars(app):
     app.jinja_env.filters['format_time'] = format_time
