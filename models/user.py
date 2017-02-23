@@ -14,7 +14,7 @@ class User(db.Model, ModelMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
-    hashed_password = db.Column(db.String(60))
+    hashed_password = db.Column(db.String(255))
     gender = db.Column(db.String(10))
     note = db.Column(db.String(255))
     _avatar = db.Column(db.String(100))
