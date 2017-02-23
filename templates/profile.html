@@ -1,0 +1,89 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row float-element">
+
+        <div class="col-md-8">
+            <div class="bm-pd-lg">
+                <div class="inline-h3">
+
+                    <span class="blue h4"><strong>所有博客</strong></span>
+                    （{{ user.blog_count }}篇）
+
+                    {% for b in user.blogs.all() %}
+                    <div class="ud-pd-md dashed">
+                        <div class="ud-pd-sm">
+
+                            <a href="{{ url_for('blog.blog_view', blog_id=b.id) }}">{{ b.title | abstract }}</a>
+                            <span class="text-muted small float-right desktop">{{ b.created_time | format_time }}</span>
+                        </div>
+
+                        <p class="dark-grey">{{ b.body | abstract }}
+                            <a href="{{ url_for('blog.blog_view', blog_id=b.id) }}"> >>更多</a>
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div><!-- end bm-pd-lg -->
+            </div>
+        </div>
+        <div class="col-md-4 rl-pd-lg right-container">
+            <div class="ud-pd-md dashed">
+                <a href="{{ url_for('user.profile', user_id=user.id) }}">
+                    <img class="avatar-lg cicle" src="{{ user.avatar }}"/>
+                </a>
+                {% if g.user == user %}
+                <a class="pull-right" href="{{ url_for('user.edit_profile_view', user_id=user.id) }}">
+                    编辑个人资料
+                </a>
+                {% endif %}
+                <h3 class="blue">
+                    <a class="nounderline" href="{{ url_for('user.profile', user_id=user.id) }}">
+                        {{ user.username }}</a>
+                </h3>
+                <ul class="list-unstyled dark-grey follow-container">
+                    <li class="ud-pd-sm">简介：{{ user.note or '暂无' }}</li>
+                    <li class="ud-pd-sm">性别：{{ user.gender or '未知' }}</li>
+
+                    {% if g.user != user %}
+
+                    <div id="id-follow-group" class="ud-pd-sm">
+                        {% if g.user and g.user.is_following(user) %}
+                        <button class="btn btn-white btn-flat btn-follow" data-uid="{{ user.id }}">
+                            <span class="glyphicon glyphicon-heart-empty"></span>
+                            <span class="follow-text">取关</span>
+                        </button>
+                        {% else %}
+                        <button class="btn btn-blue btn-flat btn-follow" data-uid="{{ user.id }}">
+                            <span class="glyphicon glyphicon-heart"></span>
+                            <span class="follow-text">关注</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="ud-pd-md dashed">
+                <ul class="list-unstyled dark-grey">
+                    <li class="ud-pd-sm">关注了 <a class="follow_count"
+                                                href="{{ url_for('user.follows', user_id=user.id)}}">{{
+                        user.following_count }}</a> 人
+                    </li>
+
+                    <li class="ud-pd-sm">被 <a class="followed_count"
+                                              href="{{ url_for('user.follows', user_id=user.id)}}">{{
+                        user.follower_count }}</a> 人关注
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- end container -->
+{% endblock %}
+
+{% block script %}
+<script src="/static/js/profile.js"></script>
+{% endblock %}

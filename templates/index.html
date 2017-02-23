@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="row float-element">
+
+        <!--<form class="ud-pd-sm mobile" action="search" method="get">-->
+        <!--<div class="form-group">-->
+        <!--<input type="text" name="q" class="form-control input-lg" placeholder="搜索你感兴趣的课程">-->
+        <!--</div>-->
+        <!--</form>-->
+
+        <div class="bm-pd-md">
+            <h4 class="blue">最新博客</h4>
+            <span class="text-muted">共 {{ pagination.total }} 篇博客（当前第 {{ pagination.page }} 页）</span>
+
+            {% for blog in pagination.items %}
+            <div class="ud-pd-md dashed">
+                <div class="row">
+                    <div class="col-md-1 col-xs-2 right-pd-no">
+                        <img class="avatar-md cicle" src="{{ blog.author.avatar }}">
+                    </div>
+                    <div class="col-md-11 col-xs-10">
+                        <div class="grey bm-pd-md">
+                            <a href="{{ url_for('user.profile', user_id=blog.author.id) }}">{{ blog.author.username }}</a>
+                            发布了
+                            <a href="{{ url_for('blog.blog_view', blog_id=blog.id) }}">{{ blog.title | abstract }}</a>
+                            <span class="float-right">{{ blog.created_time | from_now }}</span>
+                        </div>
+                        <p class="text-muted">{{ blog.body | abstract }} <a href="{{ url_for('blog.blog_view', blog_id=blog.id) }}">
+                            &gt;&gt;查看原文</a></p>
+                    </div><!-- ./col-md-8 -->
+                </div><!-- ./row -->
+            </div><!-- ./dashed -->
+            {% endfor %}
+
+
+            <ul class="pagination">
+                <li {% if not pagination.has_prev %} class="disabled" {% endif %}>
+                    <a href="{% if pagination.has_prev %}{{ url_for(endpoint,page = pagination.page - 1) }}
+                        {% else %}#{% endif %}">&laquo; </a>
+                </li>
+                {% for p in pagination.iter_pages() %}
+                {% if p %}
+                {% if p == pagination.page %}
+                <li class="active">
+                    <a href="{{ url_for(endpoint, page = p) }}">{{ p }}</a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{{ url_for(endpoint, page = p) }}">{{ p }}</a>
+                </li>
+                {% endif %} {% else %}
+                <li class="disabled"><a href="#">&hellip;</a></li>
+                {% endif %} {% endfor %}
+                <li {% if not pagination.has_next %} class="disabled" {% endif %}>
+                    <a href="{% if pagination.has_next %}{{ url_for(endpoint,page = pagination.page + 1) }}
+                        {% else %}#{% endif %}">&raquo; </a>
+                </li>
+            </ul>
+
+        </div>
+
+    </div><!-- /.float-element -->
+</div><!-- /.container -->
+
+{% endblock %}
+

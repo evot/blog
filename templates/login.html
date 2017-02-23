@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="博客, blog, flask">
+    <meta name="keywords" content="博客，轻博客">
+    <meta name="author" content="tao">
+    <link rel="stylesheet" href="/static/css/lib/bootstrap.css">
+    <link href="/static/js/lib/alertifyjs/css/alertify.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/lib/alertifyjs/alertify.js"></script>
+    <script src="/static/js/lib/jquery.min.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/login.js"></script>
+    <style>
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+<div class="tao-container">
+    <div class="tao-main">
+        <div class="tao-header tao-dropdown-md">
+            <h2 class="tao-title">博客</h2>
+        </div>
+        <div class="tao-form">
+            <div class="tao-tab">
+                <a id="id-a-signup" href="#">注册</a>
+                <a id="id-a-login" href="#">登录</a>
+                <div class="tao-block"></div>
+            </div>
+
+            <!-- register -->
+            <div id="id-div-signup">
+                <div class="tao-form-textinput">
+                    <div class="tao-top-input-wrapper">
+                        <input id="id-input-csrf_token" type='hidden' value="{{ csrf_token() }}">
+                        <input id="id-input-username" type="text" placeholder="用户名（不少于3位）" required/>
+                        <label id="id-register-username-check"></label>
+                    </div>
+                    <div class="tao-input-wrapper">
+                        <input id="id-input-password" type="password" placeholder="密码（不少于3位）" required/>
+                        <label id="id-register-password-check"></label>
+                    </div>
+                </div>
+                <button id="id-button-register" class="tao-button-big">注册</button>
+            </div>
+
+            <!-- login -->
+            <div id="id-div-login">
+                <div class="tao-form-textinput">
+                    <div class="tao-top-input-wrapper">
+                        <input id="id-input-login-csrf_token" type='hidden' value="{{ csrf_token() }}">
+                        <input id="id-input-login-username" type="text" placeholder="用户名" required/>
+                        <label id="id-login-username-check"></label>
+                    </div>
+                    <div class="tao-input-wrapper">
+                        <input id="id-input-login-password" type="password" placeholder="密码" required/>
+                        <label id="id-login-password-check"></label>
+                    </div>
+                </div>
+                <button id="id-button-login" class="tao-button-big" type="submit">登录</button>
+                <!--<div class="tao-remember">-->
+                <!--<label class="float-left"><input id="tao-id-remember" type="checkbox" name="remember"/>记住我</label>-->
+                <!--<a class="float-right" href="#">忘记密码？</a>-->
+                <!--</div>-->
+            </div>
+            <div id="id-div-visitor">
+                <input id="id-input-visitor-csrf_token" type='hidden' value="{{ csrf_token() }}">
+                <button id="id-button-visitor" class="tao-button-big">游客访问</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--BACKSTRETCH-->
+<!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
+<script src="/static/js/lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/js/lib/jquery.backstretch.min.js"></script>
+<script>
+    $.backstretch("/static/image/login-bg.jpg", {speed: 500});
+</script>
+</body>
+</html>

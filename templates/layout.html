@@ -1,0 +1,77 @@
+{% include 'common-header.html' %}
+
+<body>
+<div id="wrap">
+    <nav class="navbar navbar-default">
+        <div class="tao-nav-container">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                            aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ url_for('auth.index') }}">博客</a>
+                </div>
+
+                <!--自动折叠区, 目前效果不太好-->
+                <div id="navbar" class="collapse navbar-collapse">
+                    <form class="navbar-form navbar-left" action="{{ url_for('test.test') }}" method="get"
+                          role="search">
+                        <div class="form-group">
+                            <input type="text" name="q" class="form-control" id="search" placeholder="搜索文章，作者"
+                                   style="width: 325px">
+                        </div>
+                        <button type="submit" class="btn btn-default tao-nav-btn"><span
+                                class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </form>
+
+                    <ul class="nav navbar-nav">
+                        <li class="active" style="display: none"><a href="#"><span class="sr-only">(current)</span></a>
+                        </li>
+                        <li><a href="{{ url_for('auth.index') }}">首页</a></li>
+                        <li style="display: none"><a href="{{ url_for('auth.index') }}">用户</a></li>
+                        <li style="display: none"><a href="#">讨论区</a></li>
+                    </ul>
+
+                    <!--右区-->
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if not g.user %}
+                        <li><a href="{{ url_for('auth.login_view') }}">注册/登录</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('user.profile', user_id=g.user.id) }}">{{ g.user.username }}</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">注销</a></li>
+                        {% endif %}
+
+                        <li>
+
+                            <form class="navbar-form navbar-right" action="{{ url_for('blog.add_view') }}" method="get">
+                                <button class="btn btn-default tao-nav-btn float-right"><span
+                                        class="glyphicon glyphicon-pencil glyphicon-md right-pd-sm"></span>写博客
+                                </button>
+                                <!--<button type="submit" class="btn btn-default tao-nav-btn btn-lg"><span-->
+                                <!--class="glyphicon glyphicon-pencil"></span>-->
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+
+                </div><!--/.nav-collapse -->
+
+            </div>
+        </div>
+
+
+    </nav>
+    {% block content %}
+    {% endblock %}
+    <div id="push"></div>
+
+</div><!-- wrap -->
+{% include 'common-footer.html' %}
+</body>
+
+{% block script %} {% endblock %}

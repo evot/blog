@@ -1,0 +1,266 @@
+{% extends "layout.html" %} {% block content %}
+
+<div class="container">
+    <div class="row float-element">
+        <div class="row">
+            <!-- 左边栏 -->
+            <div class="col-md-8 inline-h3 left-container">
+                <span class="blue h3">{{ blog.title | safe }}</span>
+                <hr>
+                <ul class="text-muted list-inline list-unstyled ud-pd-sm">
+                    <li class="right-mg-md">发布时间：{{ blog.created_time | format_time }}</li>
+                    <li class="right-mg-md">浏览({{ blog.view_count }}次)</li>
+                    {% if g.user and g.user.id == blog.author.id %}
+                    <li class="right-mg-md float-right">
+                        <a href="{{ url_for('blog.edit_view', blog_id=blog.id)}}">编辑</a></li>
+                    {% endif %}
+                </ul>
+
+                <div class="blog-content">
+                    {{ blog.body | safe }}
+                    <h1></h1><br>
+                </div>
+
+                <!-- 添加评论按钮 -->
+                <div class="solid ud-pd-md inline-h3">
+                    <span class="blue h3">评论</span> {% if not g.user %}
+
+                    <a type="button" href='{{ url_for("auth.login_view") }}' class="btn btn-white float-right blue">
+                        <span class="glyphicon glyphicon-pencil glyphicon-sm right-pd-sm" aria-hidden="true"></span> 写评论
+                    </a>
+                    {% else %}
+
+                    <button id="id-button-comment" class="btn btn-white float-right blue">
+                        <span class="glyphicon glyphicon-pencil glyphicon-sm right-pd-sm" aria-hidden="true"></span>
+                        写评论
+                    </button>
+                    {% endif %}
+                </div>
+                <!-- end 添加评论按钮 -->
+
+                <!-- 博客评论输入框 -->
+                <div class="blog-comment-form-container tao-hide">
+                    <div class="ud-pd-sm">
+                        <textarea id="id-blog-comment-content" name="tao-editor"></textarea>
+                    </div>
+                    <button id="id-button-blog-comment-add" type="submit"
+                            class="btn btn-blue btn-flat float-right shadow" data-bid='{{ blog.id }}'
+                            data-sid='{% if g.user %}{{ g.user.id }}{% endif %}' data-rid='{{ blog.author_id }}'
+                            data-csrf_token="{{ csrf_token() }}">提交
+                    </button>
+                    <div class="ud-pd-lg"></div>
+                </div>
+                <!-- end 博客评论输入框 -->
+
+                <!-- 博客所有评论 -->
+                <div class="blog-comment-container">
+                    {% if not blog.comment_count() %}
+                    <div class="tips">
+                        <p>还没有评论耶！赶快添加评论吧！</p>
+                    </div>
+                    {% else %}
+                    <div class="comments-container">
+
+                        {% for c in blog.ordered_comments %}
+                        <!-- 单个评论 cell -->
+                        <div class="ud-pd-md dashed blog-comment-cell">
+                            <!-- 评论头 -->
+                            <div class="blue ud-pd-sm">
+                                <span class="right-pd-sm px16">
+                            <a href="{{ url_for('user.profile', user_id=c.sender_id) }}">
+                                {{ c.sender.username }}</a>
+                            </span> 回复
+                                <span class="left-pd-sm px16">
+                            <a href="{{ url_for('user.profile', user_id=c.receiver_id) }}">
+                                {{ c.receiver.username }}</a>
+                            </span>
+                            </div>
+                            <!-- end 评论头 -->
+
+                            <!-- 评论正文 -->
+                            <div>
+                                <p>{{ c.content | safe }}</p>
+                            </div>
+                            <!-- end 评论正文 -->
+
+                            <!-- 评论底部（评论时间, 点赞等）-->
+                            <div>
+                                <div class="bm-pd-md grey">
+                                    <span class="small">{{ c.created_time | format_time }}</span>
+                                    {% if c.is_upvoted %}
+                                    <a class="nounderline" href="javascript:void(0);">
+                                        <span class="glyphicon glyphicon-thumbs-up comment-glyphicon-thumbs-up left-pd-lg dark-blue"
+                                              data-cid="{{ c.id }}"></span>
+                                        <span class="upvote-count">{{ c.upvote_count }}</span>
+                                    </a>
+                                    {% else %}
+                                    <a class="nounderline" href="javascript:void(0);">
+                                        <span class="glyphicon glyphicon-thumbs-up comment-glyphicon-thumbs-up left-pd-lg grey"
+                                              data-cid="{{ c.id }}"></span>
+                                        <span class="upvote-count">{{ c.upvote_count }}</span>
+                                    </a>
+                                    {% endif %}
+
+                                    <!-- 回复评论按钮， 点击展开评论的所有回复 -->
+                                    <a class="nounderline" href="javascript:void(0);">
+                                        <span class="glyphicon glyphicon-comment grey left-pd-md"></span>
+                                        <span class="comment-reply-count">{{ c.reply_count }}</span>
+                                    </a>
+                                    <!-- end 回复评论按钮， 点击展开评论的所有回复 -->
+
+                                    <!-- 隐藏的评论回复区 -->
+                                    <div class="comment-reply-container tao-hide">
+
+                                        <div class="comment-reply-form-container">
+                                            <div class="ud-pd-sm">
+                                                <textarea class="tao-comment-reply-content" name="content"
+                                                          style="width: 70%"></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-blue btn-flat shadow comment-reply-add"
+                                                    data-cid='{{ c.id }}' data-rid='{{ c.sender_id }}'
+                                                    data-csrf_token="{{ csrf_token() }}">提交
+                                            </button>
+                                        </div>
+
+                                        <!-- 评论所有回复 -->
+                                        <div class="replies-container left-bd-solid">
+                                            {% for r in c.ordered_replies %}
+                                            <!-- 单个回复 cell -->
+                                            <div class="ud-pd-md dashed left-mg-sm comment-reply-cell">
+                                                <!-- 回复头 -->
+                                                <div class="blue ud-pd-sm">
+                                                    <span class="right-pd-sm px16">
+                                                      <a href="{{ url_for('user.profile', user_id=r.sender_id) }}">
+                                                        {{ r.sender.username }}</a>
+                                                    </span>
+                                                    回复
+                                                    <span class="left-pd-sm px16">
+                                                      <a href="{{ url_for('user.profile', user_id=r.receiver_id) }}">
+                                                        {{ r.receiver.username }}
+                                                      </a>
+                                                    </span>
+                                                </div>
+                                                <!-- end 回复头 -->
+
+                                                <!-- 回复正文 -->
+                                                <div>
+                                                    <p>{{ r.content }}</p>
+                                                </div>
+                                                <!-- end 回复正文 -->
+
+                                                <!-- 回复底部（评论时间, 点赞等）-->
+                                                <div class="bm-pd-md grey">
+                                                    <span class="small">{{ r.created_time | format_time }}</span> {% if
+                                                    r.is_upvoted %}
+                                                    <a class="nounderline" href="javascript:void(0);">
+                                                        <span class="glyphicon glyphicon-thumbs-up reply-glyphicon-thumbs-up left-pd-lg dark-blue"
+                                                              data-rid="{{ r.id }}"></span><span class="upvote-count">{{ r.upvote_count }}</span>
+                                                    </a>
+                                                    {% else %}
+                                                    <a class="nounderline" href="javascript:void(0);">
+                                                        <span class="glyphicon glyphicon-thumbs-up reply-glyphicon-thumbs-up left-pd-lg grey"
+                                                              data-rid="{{ r.id }}"></span>
+                                                        <span class="upvote-count">{{ r.upvote_count }}</span>
+                                                    </a>
+                                                    {% endif %}
+                                                    {% if g.user and r.sender_id == g.user.id %}
+                                                    <span class="pull-right">
+                                                     <a class="nounderline" href="javascript:void(0);">
+                                                        <span class="glyphicon glyphicon-trash reply-glyphicon-trash grey left-pd-md small"
+                                                            data-rid="{{ r.id }}"></span>
+                                                    </a>
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                                <!-- end 回复底部（评论时间, 点赞等）-->
+                                            </div>
+                                            <!-- end 单个回复 cell -->
+                                            {% endfor %}
+
+                                        </div>
+                                        <!-- end 评论所有回复 -->
+                                    </div>
+                                    <!-- end 评论回复区 -->
+                                </div>
+
+
+                                {% if g.user and c.sender_id == g.user.id %}
+                                <span class="pull-right">
+                                    <a class="nounderline" href="javascript:void(0);">
+                                        <span class="glyphicon glyphicon-trash comment-glyphicon-trash grey left-pd-md small"
+                                              data-cid="{{ c.id }}"></span>
+                                </a>
+                                </span>
+                                {% endif %}
+                            </div>
+                            <!-- end 评论底部（评论时间, 点赞等）-->
+                        </div>
+                        <!-- end 单个评论 cell -->
+                        {% endfor %}
+
+                    </div>
+                    <!-- end 博客所有评论 -->
+                    {% endif %}
+                </div>
+            </div>
+            <!-- end 左边栏 -->
+
+            <!-- 右边栏 -->
+            <div class="col-md-4 rl-pd-lg right-container">
+                <div class="ud-pd-md dashed">
+                    <a href="{{ url_for('user.profile', user_id=blog.author.id) }}">
+                        <img class="avatar-lg cicle" src="{{ blog.author.avatar}}"/>
+                    </a>
+                    <h3 class="blue">
+                        <a class="nounderline" href="{{ url_for('user.profile', user_id=blog.author.id) }}">
+                            {{ blog.author.username }}</a>
+                    </h3>
+                    <ul class="list-unstyled dark-grey follow-container">
+                        <li class="ud-pd-sm">简介：{{ blog.author.note or '暂无' }}</li>
+
+                        {% if g.user != blog.author %}
+
+                        <div id="id-follow-group" class="ud-pd-sm">
+                            {% if g.user and g.user.is_following(blog.author) %}
+                            <button class="btn btn-white btn-flat btn-follow" data-uid="{{ blog.author.id }}">
+                                <span class="glyphicon glyphicon-heart-empty"></span>
+                                <span class="follow-text">取关</span>
+                            </button>
+                            {% else %}
+                            <button class="btn btn-blue btn-flat btn-follow" data-uid="{{ blog.author.id }}">
+                                <span class="glyphicon glyphicon-heart"></span>
+                                <span class="follow-text">关注</span>
+                            </button>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="ud-pd-md dashed">
+                    <ul class="list-unstyled dark-grey">
+                        <li class="ud-pd-sm">关注了 <a class="follow_count"
+                                                    href="{{ url_for('user.follows', user_id=blog.author.id)}}">{{
+                            blog.author.following_count }}</a> 人
+                        </li>
+
+                        <li class="ud-pd-sm">被 <a class="followed_count"
+                                                  href="{{ url_for('user.follows', user_id=blog.author.id)}}">{{
+                            blog.author.follower_count }}</a> 人关注
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- end 右边栏 -->
+
+        </div>
+        <!-- row -->
+    </div>
+    <!-- float-element  -->
+</div>
+<!-- container -->
+
+{% endblock %} {% block script %}
+<script src="/static/ckeditor/ckeditor.js"></script>
+<script src="/static/ckeditor/adapters/jquery.js"></script>
+<script src="/static/js/blog-comment.js"></script>
+{% endblock %}

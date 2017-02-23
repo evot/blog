@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container">
+
+    <div class="row float-element">
+
+        <div class="col-md-6">
+            <div class="bm-pd-lg">
+                <div class="inline-h3">
+
+                    <span class="blue h4"><strong>{{ user.username }}关注的用户({{ user.following_count }}人)</strong></span>
+                    {% for u in user.followed_users %}
+
+                    <div class="ud-pd-md dashed">
+
+
+                        <a href="{{ url_for('user.profile', user_id=user.id) }}">
+                            <img class="avatar-md cicle" src="/static/image/avatar.jpg"/>
+                        </a>
+
+                        <span class="blue h5 left-mg-md"><strong>{{u.username }}</strong></span>
+
+
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="inline-h3">
+
+                    <span class="blue h4"><strong>关注{{ user.username }}的用户({{ user.follower_count }}人)</strong></span>
+                    {% for u in user.followers %}
+                    <div class="ud-pd-md dashed">
+
+                        <a href="{{ url_for('user.profile', user_id=user.id) }}">
+                            <img class="avatar-md cicle" src="/static/image/avatar.jpg"/>
+                        </a>
+
+                        <span class="blue h5 left-mg-md"><strong>{{ u.username }}</strong></span>
+
+
+                    </div>
+                     {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

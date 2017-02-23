@@ -1,0 +1,69 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row float-element">
+
+            <div class="bm-pd-lg">
+                <h3 class="blue">账户设置</h3>
+                <hr>
+                {% for message in messages %}
+                <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+                <form class="form-horizontal" action="{{ url_for('user.edit_profile', user_id=user.id)}}" method="post"
+                      enctype="multipart/form-data">
+                    <input type="hidden" name='csrf_token' value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">头像</label>
+                        <div class="col-sm-5">
+                            <img class="avatar-lg cicle rl-mg-md" src="{{ user.avatar }}"/>
+                            <label class="btn btn-grey radius4 fileupload">
+                                <input type="file" name="avatar"
+                                       onchange="$('#avatar-upload-btn').html('选择'); $('#avatar-upload-msg').show()"/>
+                                <span id="avatar-upload-btn">选择(图片不得大于 8M )</span>
+                            </label>
+                            <button id="avatar-upload-msg" type="submit" class="btn btn-blue" style="display:none">上传
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户名</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" value="{{ user.username }}" name="username">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">性别</label>
+                        <div class="col-sm-5">
+                            <input type="text" name="gender" class="form-control"
+                                   value="{{ user.gender or ''  }}">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="inputDescription" class="col-sm-2 control-label">个人简介</label>
+                        <div class="col-sm-5">
+                            <textarea type="text" class="form-control" rows="3" id="inputDescription" name="note"
+                                      value="user.note or ''"></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-2">
+                            <button type="submit" class="btn btn-blue btn-block">更新资料</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div> <!-- end float-element -->
+    </div> <!-- end container -->
+
+
+</div>
+{% endblock %}
