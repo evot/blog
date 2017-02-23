@@ -74,8 +74,8 @@ class ModelMixin(object):
         return b
 
 
-from .user import User
 from .blog import Blog
+from .user import User
 from .comment import Comment
 from .reply import Reply
 from .follow import Follow
